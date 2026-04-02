@@ -12,7 +12,7 @@
         :root {
             --main: #333;
             --bg: #fff;
-            --accent: #eee;
+            --accent: #f0f0f0;
             --input-bg: #fafafa;
             --radius: 15px;
             --danger: #e74c3c;
@@ -39,45 +39,7 @@
         }
 
         h1 { font-size: 1.8rem; font-weight: 800; margin-bottom: 8px; letter-spacing: -1px; }
-        .subtitle { font-size: 0.85rem; color: #666; font-weight: 500; margin-bottom: 30px; }
-
-        .search-container {
-            position: relative;
-            margin-bottom: 25px;
-        }
-
-        .search-box {
-            width: 100%;
-            padding: 18px;
-            padding-right: 65px;
-            border: 2px solid var(--accent);
-            border-radius: var(--radius);
-            background: var(--input-bg);
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--main) !important;
-            box-sizing: border-box;
-            outline: none;
-            -webkit-appearance: none;
-            -webkit-text-fill-color: var(--main) !important;
-            opacity: 1 !important;
-        }
-        .search-box::placeholder { color: #bbb; -webkit-text-fill-color: #bbb; }
-
-        .clear-btn {
-            position: absolute;
-            right: 15px;
-            bottom: 11px;
-            background: none;
-            border: none;
-            color: #999;
-            font-size: 0.9rem;
-            font-weight: 800;
-            cursor: pointer;
-            padding: 5px 8px;
-            display: none;
-        }
-        .clear-btn.active { display: block; }
+        .subtitle { font-size: 0.85rem; color: #666; font-weight: 500; margin-bottom: 35px; }
 
         /* Guide Card Section */
         #guideDisplay {
@@ -88,35 +50,49 @@
         .guide-card {
             background: var(--input-bg);
             border-radius: var(--radius);
-            padding: 20px;
+            padding: 25px 20px;
             border: 2px solid var(--main);
         }
-        .guide-title { font-size: 1.2rem; font-weight: 900; margin-bottom: 15px; border-bottom: 2px solid var(--accent); padding-bottom: 5px;}
+        .guide-title { font-size: 1.3rem; font-weight: 900; margin-bottom: 20px; border-bottom: 2px solid var(--accent); padding-bottom: 10px;}
         
-        .instruction { margin-bottom: 15px; }
-        .inst-label { font-size: 0.7rem; font-weight: 900; text-transform: uppercase; margin-bottom: 4px; }
+        .instruction { margin-bottom: 20px; }
+        .inst-label { font-size: 0.75rem; font-weight: 900; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px; }
         .inst-do { color: var(--success); }
         .inst-dont { color: var(--danger); }
-        .inst-text { font-size: 1rem; font-weight: 700; line-height: 1.4; }
+        .inst-text { font-size: 1.1rem; font-weight: 700; line-height: 1.4; }
 
         /* List Section */
         .stain-list {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
+            gap: 12px;
             text-align: left;
         }
         .stain-item {
             background: #fff;
             border: 1px solid #eee;
             border-radius: var(--radius);
-            padding: 12px;
+            padding: 15px 12px;
             font-size: 0.85rem;
             font-weight: 700;
             cursor: pointer;
             transition: 0.1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
         }
-        .stain-item:active { background: var(--accent); transform: scale(0.95); }
+        .stain-item:active { background: var(--accent); transform: scale(0.96); }
+
+        .general-rule {
+            margin-top: 25px;
+            font-size: 0.75rem;
+            color: #999;
+            font-weight: 600;
+            padding: 15px;
+            border-top: 1px dashed #eee;
+        }
 
         footer { margin-top: 50px; font-size: 11px; color: #aaa; line-height: 1.8; }
         .footer-btns { margin-top: 30px; }
@@ -127,7 +103,7 @@
         }
         .home-btn {
             display: block; width: 60%; margin: 0 auto; background: var(--accent);
-            color: var(--main); border: none; padding: 10px;
+            color: var(--main); border: none; padding: 12px;
             border-radius: var(--radius); font-weight: 700; font-size: 13px; cursor: pointer;
         }
 
@@ -148,13 +124,14 @@
     <h1>First Aid Stain</h1>
     <p class="subtitle">Immediate action guide for common stains.</p>
 
-    <div class="search-container">
-        <input type="text" class="search-box" id="searchInput" placeholder="Search: e.g. Coffee, Wine" oninput="filterStains()">
-        <button class="clear-btn" id="clearBtn" onclick="clearSearch()">clr</button>
-    </div>
-
     <div id="guideDisplay"></div>
-    <div class="stain-list" id="stainList"></div>
+    
+    <div id="listContainer">
+        <div class="stain-list" id="stainList"></div>
+        <div class="general-rule">
+            Unknown stain? Always use COLD water first.<br>Dab gently. Never rub.
+        </div>
+    </div>
 
     <div class="footer-btns">
         <a href="https://ko-fi.com/afrorakda" target="_blank" class="kofi-btn">☕️buy me a coffee</a>
@@ -180,25 +157,29 @@
 <script>
     const STAINS = [
         { name: "Coffee / Tea", do: "Dab with cold water & dish soap.", dont: "Don't use hot water (it sets the stain).", action: "Blot with a paper towel immediately." },
-        { name: "Red Wine", do: "Cover with salt to absorb liquid.", dont: "Don't scrub. You'll spread it.", action: "Rinse with cold sparkling water or plain water." },
-        { name: "Blood", do: "Use COLD water only.", dont: "Never use warm/hot water (sets protein).", action: "Soak in cold water and rub gently with soap." },
+        { name: "Red Wine", do: "Cover with salt to absorb liquid.", dont: "Don't scrub. You'll spread it.", action: "Rinse with cold water or sparkling water." },
+        { name: "Blood", do: "Use COLD water only.", dont: "Never use warm water (sets protein).", action: "Soak in cold water and rub with soap." },
         { name: "Mud / Dirt", do: "Let it dry completely first.", dont: "Don't wipe while wet. You'll push it in.", action: "Scrape off dry mud, then wash with soap." },
         { name: "Ketchup / Sauce", do: "Scrape off excess with a spoon.", dont: "Don't rub into the fabric.", action: "Flush from the back with cold water." },
         { name: "Oil / Grease", do: "Apply dish soap directly to dry fabric.", dont: "Don't start with just water.", action: "Let soap sit for 5 mins, then rinse." },
-        { name: "Ink (Ballpoint)", do: "Dab with rubbing alcohol or hand sanitizer.", dont: "Don't use water first.", action: "Place a paper towel underneath while dabbing." },
-        { name: "Makeup / Foundation", do: "Use shaving cream or dish soap.", dont: "Don't use a wet wipe immediately.", action: "Blot gently to lift the pigment." },
+        { name: "Ink (Ballpoint)", do: "Dab with alcohol or hand sanitizer.", dont: "Don't use water first.", action: "Place a paper towel underneath while dabbing." },
+        { name: "Makeup", do: "Use shaving cream or dish soap.", dont: "Don't use a wet wipe immediately.", action: "Blot gently to lift the pigment." },
         { name: "Chocolate", do: "Scrape off excess. Use dish soap.", dont: "Don't use hot water initially.", action: "Soak in cold water before washing." },
-        { name: "Curry / Turmeric", do: "Apply liquid detergent & sun dry.", dont: "Don't wait. Turmeric dyes quickly.", action: "Flush with cold water immediately." }
+        { name: "Curry / Turmeric", do: "Apply liquid detergent & sun dry.", dont: "Don't wait. Turmeric dyes quickly.", action: "Flush with cold water immediately." },
+        { name: "Grass", do: "Dab with rubbing alcohol or detergent.", dont: "Don't use ammonia (it sets grass).", action: "Wash as soon as possible." },
+        { name: "Fruit Juice", do: "Flush with cold water immediately.", dont: "Don't use soap first (it can set fruit).", action: "Soak in cold water and detergent." },
+        { name: "Chewing Gum", do: "Freeze with an ice cube.", dont: "Don't try to pull it while soft.", action: "Scrape off once hardened." },
+        { name: "Crayon / Wax", do: "Scrape off excess. Use dish soap.", dont: "Don't wash before scraping.", action: "Place paper towel & iron on low if needed." },
+        { name: "Sweat / Yellow", do: "Pre-treat with dish soap or vinegar.", dont: "Don't let it sit for weeks.", action: "Wash with the hottest water safe for fabric." }
     ];
 
     const stainList = document.getElementById('stainList');
     const guideDisplay = document.getElementById('guideDisplay');
-    const searchInput = document.getElementById('searchInput');
-    const clearBtn = document.getElementById('clearBtn');
+    const listContainer = document.getElementById('listContainer');
 
-    function renderList(list) {
+    function renderList() {
         stainList.innerHTML = '';
-        list.forEach(stain => {
+        STAINS.forEach(stain => {
             const item = document.createElement('div');
             item.className = 'stain-item';
             item.innerText = stain.name;
@@ -208,7 +189,8 @@
     }
 
     function showGuide(stain) {
-        stainList.style.display = 'none';
+        window.scrollTo(0, 0);
+        listContainer.style.display = 'none';
         guideDisplay.style.display = 'block';
         guideDisplay.innerHTML = `
             <div class="guide-card">
@@ -226,39 +208,16 @@
                     <div class="inst-text">${stain.action}</div>
                 </div>
             </div>
-            <button class="home-btn" style="margin-top:15px; width:100%; background:var(--main); color:#fff;" onclick="resetUI()">Back to List</button>
+            <button class="home-btn" style="margin-top:20px; width:100%; background:var(--main); color:#fff;" onclick="resetUI()">Back to List</button>
         `;
-        clearBtn.classList.add('active');
     }
 
-    function filterStains() {
-        const query = searchInput.value.toLowerCase();
-        resetUI(false);
-        if (query.length > 0) {
-            clearBtn.classList.add('active');
-        } else {
-            clearBtn.classList.remove('active');
-        }
-        const filtered = STAINS.filter(s => s.name.toLowerCase().includes(query));
-        renderList(filtered);
-    }
-
-    function resetUI(clearInput = true) {
+    function resetUI() {
         guideDisplay.style.display = 'none';
-        stainList.style.display = 'grid';
-        if (clearInput) {
-            searchInput.value = '';
-            clearBtn.classList.remove('active');
-            renderList(STAINS);
-        }
+        listContainer.style.display = 'block';
     }
 
-    function clearSearch() {
-        resetUI(true);
-        searchInput.focus();
-    }
-
-    renderList(STAINS);
+    renderList();
 
     function showModal() { document.getElementById('modal').style.display = 'flex'; }
     function hideModal() { document.getElementById('modal').style.display = 'none'; }

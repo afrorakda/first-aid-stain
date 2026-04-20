@@ -16,6 +16,7 @@
             --input-bg: #fafafa;
             --radius: 15px;
             --danger: #e74c3c;
+            --danger-light: #fff5f5;
             --success: #27ae60;
         }
 
@@ -58,7 +59,25 @@
             border-radius: 12px;
         }
 
-        .subtitle { font-size: 0.85rem; color: #999; font-weight: 700; margin-bottom: 30px; text-align: left; }
+        .subtitle { font-size: 0.85rem; color: #999; font-weight: 700; margin-bottom: 25px; text-align: left; }
+
+        /* Search Section */
+        .search-container { position: relative; margin-bottom: 20px; }
+        .search-box {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid var(--accent);
+            border-radius: var(--radius);
+            background: var(--input-bg);
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--main);
+            outline: none;
+            -webkit-appearance: none;
+            -webkit-text-fill-color: var(--main);
+            opacity: 1 !important;
+        }
+        .search-box::placeholder { color: #bbb; -webkit-text-fill-color: #bbb; font-weight: 700; }
 
         /* Guide Card Section */
         #guideDisplay {
@@ -72,9 +91,10 @@
             padding: 25px 20px;
             border: 2px solid var(--accent);
         }
-        .guide-title { font-size: 1.4rem; font-weight: 900; margin-bottom: 20px; border-bottom: 2px solid var(--accent); padding-bottom: 10px; letter-spacing: -0.5px; }
+        .guide-title { font-size: 1.5rem; font-weight: 900; margin-bottom: 20px; border-bottom: 2px solid var(--accent); padding-bottom: 12px; letter-spacing: -0.5px; }
         
-        .instruction { margin-bottom: 20px; }
+        .instruction { margin-bottom: 20px; padding: 12px; border-radius: 10px; }
+        .instruction.dont-box { background: var(--danger-light); }
         .inst-label { font-size: 0.7rem; font-weight: 900; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 1px; }
         .inst-do { color: var(--success); }
         .inst-dont { color: var(--danger); }
@@ -102,7 +122,7 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            min-height: 70px;
+            min-height: 75px;
             transition: transform 0.1s;
         }
         .stain-item:active { background: var(--accent); transform: scale(0.96); }
@@ -165,16 +185,22 @@
         <h1>First Aid Stain</h1>
         <a href="https://afrorakda.github.io/" class="hub-link">🏠 Hub</a>
     </header>
-    <p class="subtitle">Immediate action guide for common stains.</p>
+    <p class="subtitle">Quick fix for unexpected stains.</p>
 
-    <div id="guideDisplay"></div>
-    
-    <div id="listContainer">
-        <div class="stain-list" id="stainList"></div>
-        <div class="general-rule">
-            Unknown stain? Always use COLD water first.<br>Dab gently. Never rub.
+    <div id="mainUI">
+        <div class="search-container">
+            <input type="text" id="stainSearch" class="search-box" placeholder="Search stain (e.g. Wine, Oil)" oninput="filterList()">
+        </div>
+
+        <div id="listContainer">
+            <div class="stain-list" id="stainList"></div>
+            <div class="general-rule">
+                Unknown stain? Always use COLD water first.<br>Dab gently. Never rub.
+            </div>
         </div>
     </div>
+
+    <div id="guideDisplay"></div>
 
     <div class="footer-btns">
         <a href="https://ko-fi.com/afrorakda" target="_blank" class="kofi-btn">☕️buy me a coffee</a>
@@ -218,13 +244,14 @@
         { name: "Sweat / Yellow", do: "Pre-treat with dish soap or vinegar.", dont: "Don't let it sit for weeks.", action: "Wash with the hottest water safe for fabric." }
     ];
 
+    const mainUI = document.getElementById('mainUI');
     const stainList = document.getElementById('stainList');
     const guideDisplay = document.getElementById('guideDisplay');
-    const listContainer = document.getElementById('listContainer');
+    const searchBox = document.getElementById('stainSearch');
 
-    function renderList() {
+    function renderList(items = STAINS) {
         stainList.innerHTML = '';
-        STAINS.forEach(stain => {
+        items.forEach(stain => {
             const item = document.createElement('div');
             item.className = 'stain-item';
             item.innerText = stain.name;
@@ -233,9 +260,15 @@
         });
     }
 
+    function filterList() {
+        const query = searchBox.value.toLowerCase();
+        const filtered = STAINS.filter(s => s.name.toLowerCase().includes(query));
+        renderList(filtered);
+    }
+
     function showGuide(stain) {
         window.scrollTo(0, 0);
-        listContainer.style.display = 'none';
+        mainUI.style.display = 'none';
         guideDisplay.style.display = 'block';
         guideDisplay.innerHTML = `
             <div class="guide-card">
@@ -244,7 +277,7 @@
                     <div class="inst-label inst-do">✓ DO</div>
                     <div class="inst-text">${stain.do}</div>
                 </div>
-                <div class="instruction">
+                <div class="instruction dont-box">
                     <div class="inst-label inst-dont">× DON'T</div>
                     <div class="inst-text">${stain.dont}</div>
                 </div>
@@ -259,13 +292,14 @@
 
     function resetUI() {
         guideDisplay.style.display = 'none';
-        listContainer.style.display = 'block';
+        mainUI.style.display = 'block';
+        searchBox.value = '';
+        renderList();
     }
 
     function showModal() { document.getElementById('modal').style.display = 'flex'; }
     function hideModal() { document.getElementById('modal').style.display = 'none'; }
 
-    // Load dynamic footer logic (Supplementary only)
     async function loadFooter() {
         try {
             const res = await fetch('footer.json');

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>First Aid Stain</title>
     
     <link rel="icon" href="image_63.png">
@@ -12,34 +12,53 @@
         :root {
             --main: #333;
             --bg: #fff;
-            --accent: #f0f0f0;
+            --accent: #eee;
             --input-bg: #fafafa;
             --radius: 15px;
             --danger: #e74c3c;
             --success: #27ae60;
         }
 
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: var(--bg);
             color: var(--main);
-            margin: 0;
             display: flex;
             justify-content: center;
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
+            padding: env(safe-area-inset-top, 20px) 20px env(safe-area-inset-bottom, 20px) 20px;
         }
 
         .container {
             width: 100%;
             max-width: 420px;
-            padding: 40px 20px;
-            box-sizing: border-box;
-            text-align: center;
+            display: flex;
+            flex-direction: column;
         }
 
-        h1 { font-size: 1.8rem; font-weight: 800; margin-bottom: 8px; letter-spacing: -1px; }
-        .subtitle { font-size: 0.85rem; color: #666; font-weight: 500; margin-bottom: 35px; }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        h1 { font-size: 1.8rem; font-weight: 900; letter-spacing: -1.5px; }
+        
+        .hub-link {
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: var(--main);
+            background: var(--accent);
+            padding: 8px 14px;
+            border-radius: 12px;
+        }
+
+        .subtitle { font-size: 0.85rem; color: #999; font-weight: 700; margin-bottom: 30px; text-align: left; }
 
         /* Guide Card Section */
         #guideDisplay {
@@ -51,15 +70,18 @@
             background: var(--input-bg);
             border-radius: var(--radius);
             padding: 25px 20px;
-            border: 2px solid var(--main);
+            border: 2px solid var(--accent);
         }
-        .guide-title { font-size: 1.3rem; font-weight: 900; margin-bottom: 20px; border-bottom: 2px solid var(--accent); padding-bottom: 10px;}
+        .guide-title { font-size: 1.4rem; font-weight: 900; margin-bottom: 20px; border-bottom: 2px solid var(--accent); padding-bottom: 10px; letter-spacing: -0.5px; }
         
         .instruction { margin-bottom: 20px; }
-        .inst-label { font-size: 0.75rem; font-weight: 900; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px; }
+        .inst-label { font-size: 0.7rem; font-weight: 900; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 1px; }
         .inst-do { color: var(--success); }
         .inst-dont { color: var(--danger); }
-        .inst-text { font-size: 1.1rem; font-weight: 700; line-height: 1.4; }
+        .inst-text { 
+            font-size: 1.1rem; font-weight: 800; line-height: 1.4; 
+            -webkit-text-fill-color: var(--main); opacity: 1 !important;
+        }
 
         /* List Section */
         .stain-list {
@@ -69,48 +91,46 @@
             text-align: left;
         }
         .stain-item {
-            background: #fff;
-            border: 1px solid #eee;
+            background: var(--input-bg);
+            border: 2px solid var(--accent);
             border-radius: var(--radius);
             padding: 15px 12px;
-            font-size: 0.85rem;
-            font-weight: 700;
+            font-size: 0.9rem;
+            font-weight: 800;
             cursor: pointer;
-            transition: 0.1s;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-            min-height: 60px;
+            min-height: 70px;
+            transition: transform 0.1s;
         }
         .stain-item:active { background: var(--accent); transform: scale(0.96); }
 
-        /* General Rule - Enhanced Visibility */
         .general-rule {
             margin-top: 30px;
-            font-size: 0.85rem;
-            color: #777;
+            font-size: 0.8rem;
+            color: #bbb;
             font-weight: 700;
             padding: 20px 15px;
-            border-top: 1px dashed #ddd;
-            line-height: 1.5;
+            border-top: 2px dashed var(--accent);
+            line-height: 1.6;
+            text-align: center;
         }
 
-        footer { margin-top: 50px; font-size: 11px; color: #aaa; line-height: 1.8; }
-        .footer-btns { margin-top: 30px; }
-        
+        /* Footer & Buttons */
+        .footer-btns { margin-top: auto; padding: 40px 0 20px; text-align: center; }
         .kofi-btn {
-            display: inline-block; background: var(--main); color: #fff;
-            padding: 12px 25px; border-radius: var(--radius);
-            text-decoration: none; font-weight: bold; font-size: 14px; margin-bottom: 12px;
+            display: inline-flex; align-items: center; justify-content: center;
+            background: var(--main); color: #fff; width: 100%; max-width: 320px;
+            padding: 16px; border-radius: var(--radius);
+            text-decoration: none; font-weight: 900; font-size: 0.9rem; margin-bottom: 12px;
+            -webkit-text-fill-color: #fff;
         }
-
-        /* Back to List Button - Enhanced Visibility */
         .home-btn {
-            display: block; width: 60%; margin: 0 auto; background: var(--accent);
-            color: var(--main); border: none; padding: 12px;
-            border-radius: var(--radius); font-weight: 800; font-size: 13px; cursor: pointer;
+            display: block; width: 100%; max-width: 320px; margin: 0 auto; 
+            background: var(--accent); color: var(--main); border: none; 
+            padding: 12px; border-radius: var(--radius); font-weight: 800; font-size: 0.85rem; cursor: pointer;
         }
         .back-btn {
             background: var(--main) !important;
@@ -119,23 +139,32 @@
             padding: 18px !important;
             font-size: 1rem !important;
             margin-top: 20px;
+            font-weight: 900;
         }
 
+        footer { padding: 20px 0; text-align: center; font-size: 0.7rem; color: #bbb; line-height: 1.6; font-weight: 600; }
+        footer a { color: inherit; text-decoration: underline; }
+
+        /* Modal */
         #modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 100;
+            background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 1000;
+            backdrop-filter: blur(4px);
         }
         .modal-content {
-            background: #fff; width: 85%; max-width: 320px; padding: 30px;
+            background: #fff; width: 90%; max-width: 320px; padding: 35px;
             border-radius: var(--radius); text-align: left; position: relative;
         }
-        .close-x { position: absolute; top: 15px; right: 20px; font-size: 20px; color: #ccc; cursor: pointer; }
+        .close-x { position: absolute; top: 15px; right: 20px; font-size: 24px; color: #ccc; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>First Aid Stain</h1>
+    <header>
+        <h1>First Aid Stain</h1>
+        <a href="https://afrorakda.github.io/" class="hub-link">🏠 Hub</a>
+    </header>
     <p class="subtitle">Immediate action guide for common stains.</p>
 
     <div id="guideDisplay"></div>
@@ -152,19 +181,21 @@
         <button class="home-btn" onclick="showModal()">Add to Home Screen</button>
     </div>
 
-    <footer>
-        <div>No login / No tracking / No ads / Browser only</div>
-        <div>Privacy Policy / afrorakda © 2026</div>
+    <footer id="dynamicFooter">
+        No login / No tracking / No ads / Browser only<br>
+        <a href="https://afrorakda.com/privacy/">Privacy Policy</a> / afrorakda © 2026
     </footer>
 </div>
 
 <div id="modal" onclick="hideModal()">
     <div class="modal-content" onclick="event.stopPropagation()">
         <span class="close-x" onclick="hideModal()">×</span>
-        <h3>📱 Install</h3>
-        <p>Add to your home screen.</p>
-        <p>🍏 <strong>iPhone (Safari):</strong><br>Tap Share, then Add to Home Screen.</p>
-        <p>🤖 <strong>Android (Chrome):</strong><br>Tap Menu (⋮), then Add to Home Screen.</p>
+        <h3 style="margin-bottom: 10px; font-weight: 900;">📱 Install</h3>
+        <p style="margin-bottom: 20px; color: #999; font-weight: 700; font-size: 0.85rem;">Add to your home screen.</p>
+        <div style="font-size: 0.9rem; line-height: 1.6; font-weight: 700;">
+            <p>🍏 <strong>iPhone:</strong><br>Share > Add to Home Screen</p>
+            <p style="margin-top:10px;">🤖 <strong>Android:</strong><br>Menu (⋮) > Add to Home Screen</p>
+        </div>
     </div>
 </div>
 
@@ -231,10 +262,24 @@
         listContainer.style.display = 'block';
     }
 
-    renderList();
-
     function showModal() { document.getElementById('modal').style.display = 'flex'; }
     function hideModal() { document.getElementById('modal').style.display = 'none'; }
+
+    // Load dynamic footer logic (Supplementary only)
+    async function loadFooter() {
+        try {
+            const res = await fetch('footer.json');
+            if (res.ok) {
+                const data = await res.json();
+                if (data.footerHtml) document.getElementById('dynamicFooter').innerHTML = data.footerHtml;
+            }
+        } catch (e) {}
+    }
+
+    window.onload = () => {
+        renderList();
+        loadFooter();
+    };
 </script>
 
 </body>

@@ -65,19 +65,30 @@
         .search-container { position: relative; margin-bottom: 20px; }
         .search-box {
             width: 100%;
-            padding: 16px;
+            padding: 18px;
+            padding-right: 50px;
             border: 2px solid var(--accent);
             border-radius: var(--radius);
             background: var(--input-bg);
-            font-size: 1rem;
+            font-size: 1.1rem;
             font-weight: 800;
-            color: var(--main);
+            color: var(--main) !important;
             outline: none;
             -webkit-appearance: none;
-            -webkit-text-fill-color: var(--main);
+            -webkit-text-fill-color: var(--main) !important;
             opacity: 1 !important;
+            transition: border-color 0.2s;
         }
+        .search-box:focus { border-color: #bbb; }
         .search-box::placeholder { color: #bbb; -webkit-text-fill-color: #bbb; font-weight: 700; }
+
+        .clear-btn {
+            position: absolute; right: 15px; top: 50%; transform: translateY(-50%);
+            background: #ccc; color: #fff; border: none; width: 26px; height: 26px;
+            border-radius: 50%; font-size: 16px; font-weight: bold; cursor: pointer;
+            display: none; align-items: center; justify-content: center; z-index: 2;
+        }
+        .clear-btn.active { display: flex; }
 
         /* Guide Card Section */
         #guideDisplay {
@@ -126,6 +137,8 @@
             transition: transform 0.1s;
         }
         .stain-item:active { background: var(--accent); transform: scale(0.96); }
+
+        .empty-state { padding: 40px 20px; text-align: center; color: #ccc; font-weight: 800; font-size: 0.95rem; }
 
         .general-rule {
             margin-top: 30px;
@@ -189,12 +202,13 @@
 
     <div id="mainUI">
         <div class="search-container">
-            <input type="text" id="stainSearch" class="search-box" placeholder="Search stain (e.g. Wine, Oil)" oninput="filterList()">
+            <input type="text" id="stainSearch" class="search-box" placeholder="Search stain (e.g. Wine, Oil)" oninput="handleSearchInput()">
+            <button class="clear-btn" id="clearBtn" onclick="clearSearch()">×</button>
         </div>
 
         <div id="listContainer">
             <div class="stain-list" id="stainList"></div>
-            <div class="general-rule">
+            <div class="general-rule" id="generalRule">
                 Unknown stain? Always use COLD water first.<br>Dab gently. Never rub.
             </div>
         </div>
@@ -248,9 +262,17 @@
     const stainList = document.getElementById('stainList');
     const guideDisplay = document.getElementById('guideDisplay');
     const searchBox = document.getElementById('stainSearch');
+    const clearBtn = document.getElementById('clearBtn');
+    const generalRule = document.getElementById('generalRule');
 
     function renderList(items = STAINS) {
         stainList.innerHTML = '';
+        if (items.length === 0) {
+            stainList.innerHTML = '<div class="empty-state">No stain found.<br>Try common terms like "Wine" or "Oil".</div>';
+            generalRule.style.display = 'none';
+            return;
+        }
+        generalRule.style.display = 'block';
         items.forEach(stain => {
             const item = document.createElement('div');
             item.className = 'stain-item';
@@ -260,10 +282,18 @@
         });
     }
 
-    function filterList() {
+    function handleSearchInput() {
         const query = searchBox.value.toLowerCase();
+        clearBtn.classList.toggle('active', query.length > 0);
         const filtered = STAINS.filter(s => s.name.toLowerCase().includes(query));
         renderList(filtered);
+    }
+
+    function clearSearch() {
+        searchBox.value = '';
+        clearBtn.classList.remove('active');
+        searchBox.focus();
+        renderList();
     }
 
     function showGuide(stain) {
@@ -293,8 +323,7 @@
     function resetUI() {
         guideDisplay.style.display = 'none';
         mainUI.style.display = 'block';
-        searchBox.value = '';
-        renderList();
+        clearSearch();
     }
 
     function showModal() { document.getElementById('modal').style.display = 'flex'; }
